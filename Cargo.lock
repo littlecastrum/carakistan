@@ -16,6 +16,14 @@ version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "carakistan"
+version = "0.1.0"
+dependencies = [
+ "rand 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tcod 0.14.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "cc"
 version = "1.0.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -26,14 +34,6 @@ version = "0.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "dwemthys"
-version = "0.1.0"
-dependencies = [
- "rand 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "tcod 0.14.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

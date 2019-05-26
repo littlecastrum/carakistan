@@ -1,9 +1,9 @@
-use tcod::console::{ Root, Console,  BackgroundFlag };
 use tcod::input::{ Key, KeyCode };
 
-use crate::traits::Updates;
-use crate::util::{Point, Contains::{DoesContain, DoesNotContain}};
+use crate::traits::{ Updates, RendererComponent };
+use crate::util::{ Point, Contains::{ DoesContain, DoesNotContain } };
 use crate::game::Game;
+use crate::render::TcodRender;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Character {
@@ -32,18 +32,27 @@ impl Updates for Character {
             _ => ()
         }
 
-        match game.window_bounds.contains(self.position.offset(offset)) {
+        match game.window.contains(self.position.offset(offset)) {
             DoesContain => self.position = self.position.offset(offset),
             DoesNotContain => ()
         }
     }
 
-    fn render(&self, console: &mut Root) {
-        console.put_char(
-            self.position.x,
-            self.position.y,
-            self.display_char,
-            BackgroundFlag::Set
-        );
+    fn render(&self, console: &mut TcodRender) {
+        console.add_object(self.position, self.display_char);
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::Character;
+    use crate::util::{ Point };
+
+    #[test]
+    fn new_character() {
+        let player = Character::new(40, 25, '@');
+        assert_eq!(player.position, Point { x: 40, y: 25 });
+        assert_eq!(player.display_char, '@');
     }
 }
