@@ -1,5 +1,22 @@
 use std::ops::Add;
 
+pub enum XPointRelation {
+    LeftOfPoint,
+    RightOfPoint,
+    OnPointX
+}
+
+pub enum YPointRelation {
+    AbovePoint,
+    BelowPoint,
+    OnPointY
+}
+
+pub enum PointEquality {
+    PointsEqual,
+    PointsNotEqual
+}
+
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Point {
     pub x: i32,
@@ -33,6 +50,34 @@ impl Point {
     pub fn offset(self, offset: Point) -> Point {
         self + offset
     }
+
+    pub fn compare_x(&self, point: Point) -> XPointRelation {
+        if self.x > point.x {
+            XPointRelation::RightOfPoint
+        } else if self.x < point.x {
+            XPointRelation::LeftOfPoint
+        } else {
+            XPointRelation::OnPointX
+        }
+    }
+
+    pub fn compare_y(&self, point: Point) -> YPointRelation {
+        if self.y > point.y {
+            YPointRelation::BelowPoint
+        } else if self.y < point.y {
+            YPointRelation::AbovePoint
+        } else {
+            YPointRelation::OnPointY
+        }
+    }
+
+    pub fn compare(&self, point: Point) -> PointEquality {
+        if self.x == point.x && self.y == point.y {
+            PointEquality::PointsEqual
+        } else {
+            PointEquality::PointsNotEqual
+        }
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -41,7 +86,7 @@ pub enum Contains {
     DoesNotContain
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Window {
     pub width: i32,
     pub height: i32,

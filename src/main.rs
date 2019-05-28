@@ -2,27 +2,26 @@ use tcod::input::{ KeyCode };
 
 use carakistan::game::Game;
 use carakistan::character::Character;
-use carakistan::npc::NPC;
-use carakistan::traits::{ RendererComponent };
 
 fn main() {
     let mut game = Game::new();
-    let mut player = Character::new(40, 25, '@');
-    let mut npcs: Vec<NPC> = vec![
-        NPC::new(10, 10, 'd'),
-        NPC::new(40, 25, 'c')
+    let mut player = Character::hero(game.window);
+    let mut npcs: Vec<Character> = vec![
+        Character::dog(10, 10, game.window),
+        Character::cat(40, 25, game.window),
+        Character::kobold(40, 25, game.window)
     ];
 
-    game.render(&mut npcs, player);
+    game.render(&mut npcs, &player);
     while !(game.window_closed() || game.exit) {
-        let keypress = game.render.wait_for_keypress();
+        let keypress = game.wait_for_keypress();
 
         match keypress.code { 
             KeyCode::Escape => game.exit(),
             _ => ()
         }
         
-        game.update(&mut npcs, &mut player, keypress);
-        game.render(&mut npcs, player);
+        game.update(&mut npcs, &mut player);
+        game.render(&mut npcs, &player);
     }
 }

@@ -1,21 +1,22 @@
 use tcod::input::{ Key };
 
-use crate::util::Window;
-use crate::npc::NPC;
+use crate::util::{ Point, Window};
+use crate::render::{ RendererComponent, TcodRender };
 use crate::character::Character;
-use crate::render::TcodRender;
-use crate::traits::{ Updates, RendererComponent };
+
+static mut LAST_KEYPRESS : Option<Key> = None;
+static mut HERO_LOCATION : Point = Point { x: 40, y: 25 };
 
 pub struct Game {
     pub exit: bool,
     pub window: Window,
-    pub render: TcodRender
+    pub render: Box<RendererComponent>
 }
 
-impl Game{
+impl Game {
     pub fn new() -> Game {
         let window = Window::new(80, 50);
-        let render = TcodRender::new(&window);
+        let render = Box::new(TcodRender::new(&window));
         Game {
             exit: false,
             window,
@@ -27,7 +28,7 @@ impl Game{
         self.exit = true;
     }
 
-    pub fn render(&mut self, npcs: &Vec<NPC>, player: Character) {
+    pub fn render(&mut self, npcs: &Vec<Character>, player: &Character) {
         self.render.clear();
         for npc in npcs.iter() {
             npc.render(&mut self.render);
@@ -36,11 +37,34 @@ impl Game{
         self.render.flush();
     }
 
-    pub fn update(&mut self, npcs: &mut Vec<NPC>, player: &mut Character, keypress: Key) {
-        player.update(keypress, self);
+    pub fn update(&mut self, npcs: &mut Vec<Character>, player: &mut Character) {
+        player.update();
+        Game::set_hero_point(player.position);
         for npc in npcs.iter_mut() {
-            npc.update(keypress, self);
+            npc.update();
         }
+    }
+
+    pub fn get_last_keypress() -> Option<Key> {
+        unsafe { LAST_KEYPRESS }
+    }
+
+    pub fn set_last_keypress(keypress: Key) {
+        unsafe { LAST_KEYPRESS = Some(keypress); }
+    }
+
+    pub fn wait_for_keypress(&mut self) -> Key {
+        let keypress = self.render.wait_for_keypress();
+        Game::set_last_keypress(keypress);
+        return keypress;
+    }
+
+    pub fn get_hero_point() -> Point {
+        unsafe { HERO_LOCATION }
+    }
+
+    pub fn set_hero_point(point: Point) {
+        unsafe { HERO_LOCATION = point; }
     }
 
     pub fn window_closed(&mut self) -> bool {

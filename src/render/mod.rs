@@ -1,14 +1,21 @@
 use tcod::console::{ Console, Root, BackgroundFlag, FontLayout, FontType };
 use tcod::input::{ Key };
 use crate::util::{ Point, Window };
-use crate::traits::RendererComponent;
+
+pub trait RendererComponent {
+    fn clear(&mut self);
+    fn add_object(&mut self, position: Point, symbol: char);
+    fn flush(&mut self);
+    fn wait_for_keypress(&mut self) -> Key;
+    fn window_closed(&mut self) -> bool;
+}
 
 pub struct TcodRender {
     console: Root
 }
 
-impl RendererComponent for TcodRender {
-    fn new(window: &Window) -> TcodRender {
+impl TcodRender {
+    pub fn new(window: &Window) -> TcodRender {
         let console: Root = Root::initializer()
             .font("arial10x10.png", FontLayout::Tcod)
             .font_type(FontType::Greyscale)
@@ -17,6 +24,9 @@ impl RendererComponent for TcodRender {
             .init();
         TcodRender { console }
     }
+}
+
+impl RendererComponent for TcodRender {
 
     fn wait_for_keypress(&mut self) -> Key {
         self.console.wait_for_keypress(true)
